@@ -60,6 +60,12 @@ class Game8:
                 if self.table[i][j] == 'b':
                     return (i, j)
 
+    def get_position(self, element):
+        for i in range(len(self.table)):
+            for j in range(len(self.table[i])):
+                if self.table[i][j] == element:
+                    return (i, j)
+
     def show_table(self):
         print('----------------')
         for i in range(len(self.table)):
