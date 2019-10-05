@@ -1,36 +1,16 @@
 import game as g
 import search as s
 
-table = [[1, 2, 3], [4, 5, 6], ['b', 8, 7]]
+table2 = [[5, 'b', 2], [1, 4, 3], [7, 8, 6]]
+table3 = [['b', 2, 3], [1, 5, 6], [4, 7, 8]]
 
-new_game = g.Game8(table)
-'''
-new_game.show_table()
-while new_game.move(g.move_directions['UP']):
-    new_game.show_table()
-while new_game.move(g.move_directions['RIGHT']):
-    new_game.show_table()
-while new_game.move(g.move_directions['DOWN']):
-    new_game.show_table()
-while new_game.move(g.move_directions['LEFT']):
-    new_game.show_table()
+#initial_state = s.StateNode(g.Game8(table2), None, None, 0, 0)
+initial_state = s.StateNode(g.Game8(table3), None, None, 0, 0)
 
-print(new_game.moves)'''
+#search = s.depth_first_search(initial_state)
+search = s.breadth_first_search(initial_state)
 
-initial_state = s.StateNode(new_game, None, None, 0, 0)
-print(initial_state.toString())
+for state in search:
+    state.game.show_table()
 
-initial_state.game.show_table()
-
-new_state = initial_state.generate_son(g.move_directions['DOWN'])
-
-print(new_state)
-
-new_state = initial_state.generate_son(g.move_directions['UP'])
-new_state2 = initial_state.generate_son(g.move_directions['RIGHT'])
-
-for i in range(len(initial_state.sons)):
-    print(initial_state.sons[i].toString())
-    initial_state.sons[i].game.show_table()
-
-print(initial_state.sons)
+print(search.__len__())
