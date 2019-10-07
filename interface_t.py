@@ -82,13 +82,34 @@ class Application:
         self.m21.grid(row=7, column=6)
         self.m22.grid(row=7, column=7)
 
+        self.depth_label = Label(text="Profundidade: ")
+        self.depth_label['bg'] = background_b
+        self.depth_label['fg'] = foreground_b
+        self.depth_label.place(relx=0.5, rely=0.45, anchor=CENTER)
+
+        self.bprof = Button()
+        self.bprof["text"] = "Busca Profundidade"
+        self.bprof["font"] = fonte_b
+        self.bprof["bg"] = butt
+        self.bprof["width"] = 17
+        self.bprof["command"] = self.BuscaProfundidade
+        self.bprof.place(relx=0.5, rely=0.55, anchor=CENTER)
+
         self.blargura = Button()
         self.blargura["text"] = "Busca Largura"
         self.blargura["font"] = fonte_b
         self.blargura["bg"] = butt
-        self.blargura["width"] = 15
+        self.blargura["width"] = 17
         self.blargura["command"] = self.BuscaLargura
         self.blargura.place(relx=0.5, rely=0.65, anchor=CENTER)
+
+        self.bgulosa = Button()
+        self.bgulosa["text"] = "Busca Gulosa"
+        self.bgulosa["font"] = fonte_b
+        self.bgulosa["bg"] = butt
+        self.bgulosa["width"] = 17
+        self.bgulosa["command"] = self.BuscaGulosa
+        self.bgulosa.place(relx=0.5, rely=0.75, anchor=CENTER)
 
         self.bprof = Button()
         self.bprof["text"] = "Busca A*"
@@ -97,7 +118,7 @@ class Application:
         self.bprof["activebackground"] = "grey10"
         self.bprof["width"] = 17
         self.bprof["command"] = self.BuscaAEstrela
-        self.bprof.place(relx=0.5, rely=0.75, anchor=CENTER)
+        self.bprof.place(relx=0.5, rely=0.85, anchor=CENTER)
 
     def get_table(self):
         table = [[], [], []]
@@ -178,12 +199,39 @@ class Application:
         self.m22.insert(INSERT, str(table[2][2]))
         root.update()
 
+    def BuscaProfundidade(self):
+        table = self.get_table()
+        print(table)
+        initial_state = StateNode(Game8(table), None, None, 0, 0)
+        path = depth_first_search(initial_state)
+        for state in path:
+            self.depth_label['text'] = 'Profundidade: ' + str(state.depth)
+            b = state.game.get_b_position()
+            state.game.table[b[0]][b[1]] = ''
+            self.set_table(state.game.table)
+            state.game.show_table()
+            time.sleep(1)
+
     def BuscaLargura(self):
         table = self.get_table()
         print(table)
         initial_state = StateNode(Game8(table), None, None, 0, 0)
         path = breadth_first_search(initial_state)
         for state in path:
+            self.depth_label['text'] = 'Profundidade: ' + str(state.depth)
+            b = state.game.get_b_position()
+            state.game.table[b[0]][b[1]] = ''
+            self.set_table(state.game.table)
+            state.game.show_table()
+            time.sleep(1)
+
+    def BuscaGulosa(self):
+        table = self.get_table()
+        print(table)
+        initial_state = StateNode(Game8(table), None, None, 0, 0)
+        path = greedy_search(initial_state)
+        for state in path:
+            self.depth_label['text'] = 'Profundidade: ' + str(state.depth)
             b = state.game.get_b_position()
             state.game.table[b[0]][b[1]] = ''
             self.set_table(state.game.table)
@@ -196,6 +244,7 @@ class Application:
         initial_state = StateNode(Game8(table), None, None, 0, 0)
         path = a_star_search(initial_state)
         for state in path:
+            self.depth_label['text'] = 'Profundidade: ' + str(state.depth)
             b = state.game.get_b_position()
             state.game.table[b[0]][b[1]] = ''
             self.set_table(state.game.table)
