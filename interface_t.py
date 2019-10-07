@@ -1,5 +1,6 @@
 from tkinter import *
-from search import *
+from search import depth_first_search, breadth_first_search, greedy_search, a_star_search, StateNode
+import search as s
 from game import *
 import time
 
@@ -85,7 +86,17 @@ class Application:
         self.depth_label = Label(text="Profundidade: ")
         self.depth_label['bg'] = background_b
         self.depth_label['fg'] = foreground_b
-        self.depth_label.place(relx=0.5, rely=0.45, anchor=CENTER)
+        self.depth_label.place(relx=0.5, rely=0.43, anchor=CENTER)
+        
+        self.generated_nodes_label = Label(text='')
+        self.generated_nodes_label['bg'] = background_b
+        self.generated_nodes_label['fg'] = foreground_b
+        self.generated_nodes_label.place(relx=0.5, rely=0.48, anchor=CENTER)
+
+        self.execution_time = Label(text='')
+        self.execution_time['bg'] = background_b
+        self.execution_time['fg'] = foreground_b
+        self.execution_time.place(relx=0.5, rely=0.53, anchor=CENTER)
 
         self.bprof = Button()
         self.bprof["text"] = "Busca Profundidade"
@@ -93,7 +104,7 @@ class Application:
         self.bprof["bg"] = butt
         self.bprof["width"] = 17
         self.bprof["command"] = self.BuscaProfundidade
-        self.bprof.place(relx=0.5, rely=0.55, anchor=CENTER)
+        self.bprof.place(relx=0.5, rely=0.63, anchor=CENTER)
 
         self.blargura = Button()
         self.blargura["text"] = "Busca Largura"
@@ -101,7 +112,7 @@ class Application:
         self.blargura["bg"] = butt
         self.blargura["width"] = 17
         self.blargura["command"] = self.BuscaLargura
-        self.blargura.place(relx=0.5, rely=0.65, anchor=CENTER)
+        self.blargura.place(relx=0.5, rely=0.73, anchor=CENTER)
 
         self.bgulosa = Button()
         self.bgulosa["text"] = "Busca Gulosa"
@@ -109,7 +120,7 @@ class Application:
         self.bgulosa["bg"] = butt
         self.bgulosa["width"] = 17
         self.bgulosa["command"] = self.BuscaGulosa
-        self.bgulosa.place(relx=0.5, rely=0.75, anchor=CENTER)
+        self.bgulosa.place(relx=0.5, rely=0.83, anchor=CENTER)
 
         self.bprof = Button()
         self.bprof["text"] = "Busca A*"
@@ -118,7 +129,7 @@ class Application:
         self.bprof["activebackground"] = "grey10"
         self.bprof["width"] = 17
         self.bprof["command"] = self.BuscaAEstrela
-        self.bprof.place(relx=0.5, rely=0.85, anchor=CENTER)
+        self.bprof.place(relx=0.5, rely=0.93, anchor=CENTER)
 
     def get_table(self):
         table = [[], [], []]
@@ -203,7 +214,9 @@ class Application:
         table = self.get_table()
         print(table)
         initial_state = StateNode(Game8(table), None, None, 0, 0)
+        start = int(round(time.time() * 1000))
         path = depth_first_search(initial_state)
+        end = int(round(time.time() * 1000))
         for state in path:
             self.depth_label['text'] = 'Profundidade: ' + str(state.depth)
             b = state.game.get_b_position()
@@ -211,12 +224,16 @@ class Application:
             self.set_table(state.game.table)
             state.game.show_table()
             time.sleep(1)
+        self.generated_nodes_label['text'] = 'Nós gerados: ' + str(s.generated_nodes)
+        self.execution_time['text'] = 'Tempo de execução (ms): ' + str(end - start)
 
     def BuscaLargura(self):
         table = self.get_table()
         print(table)
         initial_state = StateNode(Game8(table), None, None, 0, 0)
+        start = int(round(time.time() * 1000))
         path = breadth_first_search(initial_state)
+        end = int(round(time.time() * 1000))
         for state in path:
             self.depth_label['text'] = 'Profundidade: ' + str(state.depth)
             b = state.game.get_b_position()
@@ -224,12 +241,16 @@ class Application:
             self.set_table(state.game.table)
             state.game.show_table()
             time.sleep(1)
+        self.generated_nodes_label['text'] = 'Nós gerados: ' + str(s.generated_nodes)
+        self.execution_time['text'] = 'Tempo de execução (ms): ' + str(end - start)
 
     def BuscaGulosa(self):
         table = self.get_table()
         print(table)
         initial_state = StateNode(Game8(table), None, None, 0, 0)
+        start = int(round(time.time() * 1000))
         path = greedy_search(initial_state)
+        end = int(round(time.time() * 1000))
         for state in path:
             self.depth_label['text'] = 'Profundidade: ' + str(state.depth)
             b = state.game.get_b_position()
@@ -237,12 +258,16 @@ class Application:
             self.set_table(state.game.table)
             state.game.show_table()
             time.sleep(1)
+        self.generated_nodes_label['text'] = 'Nós gerados: ' + str(s.generated_nodes)
+        self.execution_time['text'] = 'Tempo de execução (ms): ' + str(end - start)
 
     def BuscaAEstrela(self):
         table = self.get_table()
         print(table)
         initial_state = StateNode(Game8(table), None, None, 0, 0)
+        start = int(round(time.time() * 1000))
         path = a_star_search(initial_state)
+        end = int(round(time.time() * 1000))
         for state in path:
             self.depth_label['text'] = 'Profundidade: ' + str(state.depth)
             b = state.game.get_b_position()
@@ -250,6 +275,8 @@ class Application:
             self.set_table(state.game.table)
             state.game.show_table()
             time.sleep(1)
+        self.generated_nodes_label['text'] = 'Nós gerados: ' + str(s.generated_nodes)
+        self.execution_time['text'] = 'Tempo de execução (ms): ' + str(end - start)
 
 
 root = Tk()
