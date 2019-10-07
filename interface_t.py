@@ -1,4 +1,7 @@
 from tkinter import *
+from search import *
+from game import *
+import time
 
 class Application:
     def __init__(self, master=None):
@@ -36,7 +39,6 @@ class Application:
         self.m00 = Entry(self.widget2, justify='center', width= n)
         self.m00["bg"] = background_a
         self.m00["fg"] = foreground_a
-        self.m00.insert(END, jog[0][0])
 
         self.m01 = Entry(self.widget2, justify='center', width= n)
         self.m01["bg"] = background_a
@@ -89,28 +91,116 @@ class Application:
         self.blargura.place(relx=0.5, rely=0.65, anchor=CENTER)
 
         self.bprof = Button()
-        self.bprof["text"] = "Busca Profundidade"
+        self.bprof["text"] = "Busca A*"
         self.bprof["font"] = fonte_b
         self.bprof["bg"] = butt
         self.bprof["activebackground"] = "grey10"
         self.bprof["width"] = 17
-        self.bprof["command"] = self.BuscaProfundidade
+        self.bprof["command"] = self.BuscaAEstrela
         self.bprof.place(relx=0.5, rely=0.75, anchor=CENTER)
 
+    def get_table(self):
+        table = [[], [], []]
+        x = self.m00.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[0].append(x)
+        x = self.m01.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[0].append(x)
+        x = self.m02.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[0].append(x)
+        x = self.m10.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[1].append(x)
+        x = self.m11.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[1].append(x)
+        x = self.m12.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[1].append(x)
+        x = self.m20.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[2].append(x)
+        x = self.m21.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[2].append(x)
+        x = self.m22.get()
+        if x == '':
+            x = 'b'
+        else:
+            x = int(x)
+        table[2].append(x)
+        return table
+
+    def set_table(self, table):
+        self.m00.delete(0, 'end')
+        self.m00.insert(INSERT, str(table[0][0]))
+        self.m01.delete(0, 'end')
+        self.m01.insert(INSERT, str(table[0][1]))
+        self.m02.delete(0, 'end')
+        self.m02.insert(INSERT, str(table[0][2]))
+        self.m10.delete(0, 'end')
+        self.m10.insert(INSERT, str(table[1][0]))
+        self.m11.delete(0, 'end')
+        self.m11.insert(INSERT, str(table[1][1]))
+        self.m12.delete(0, 'end')
+        self.m12.insert(INSERT, str(table[1][2]))
+        self.m20.delete(0, 'end')
+        self.m20.insert(INSERT, str(table[2][0]))
+        self.m21.delete(0, 'end')
+        self.m21.insert(INSERT, str(table[2][1]))
+        self.m22.delete(0, 'end')
+        self.m22.insert(INSERT, str(table[2][2]))
+        root.update()
 
     def BuscaLargura(self):
-        self.m00.delete(0, 'end')
-        self.m00.insert(INSERT, "OPA")
-        root.update()
-        self.m00.after(700, self.m00.delete(0, 'end'))
+        table = self.get_table()
+        print(table)
+        initial_state = StateNode(Game8(table), None, None, 0, 0)
+        path = breadth_first_search(initial_state)
+        for state in path:
+            b = state.game.get_b_position()
+            state.game.table[b[0]][b[1]] = ''
+            self.set_table(state.game.table)
+            state.game.show_table()
+            time.sleep(1)
 
-    def BuscaProfundidade(self):
-        w = int(self.m00.get())
-        self.m00.delete(0, 'end')
-        w+=1
-        self.m01.insert(INSERT, w)
-        root.update()
-        #self.m00.after(700, self.m00.delete(0, 'end'))
+    def BuscaAEstrela(self):
+        table = self.get_table()
+        print(table)
+        initial_state = StateNode(Game8(table), None, None, 0, 0)
+        path = a_star_search(initial_state)
+        for state in path:
+            b = state.game.get_b_position()
+            state.game.table[b[0]][b[1]] = ''
+            self.set_table(state.game.table)
+            state.game.show_table()
+            time.sleep(1)
 
 
 root = Tk()
