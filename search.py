@@ -37,13 +37,28 @@ class StateNode:
         return "Generator: " + str(self.generator) + ", Depth: " + str(self.depth) + ", Cost: " + str(self.cost)
 
 
+generated_nodes = 0
+state_border = 0
+max_depth = 0
+
+def start_test_variables():
+    global generated_nodes
+    generated_nodes = 0
+    global state_border
+    state_border = 0
+    global max_depth
+    max_depth = 0
+
 # Function for depth first search, returns the path (list of states) of the search
 def depth_first_search(initial_state: StateNode):
+    start_test_variables()
+    global generated_nodes, state_border, max_depth
     path_start = [initial_state]
     # Case where the initial state is the final state
     if initial_state.is_final_state():
         return path_start
     stack = initial_state.generate_children()
+    generated_nodes += len(initial_state.children)
     next_state = stack.pop()
     while next_state:
         # Case where the final state is reached we end the loop
@@ -53,8 +68,12 @@ def depth_first_search(initial_state: StateNode):
         if next_state.depth >= 2 and next_state.game == next_state.parent.parent.game:
             next_state = stack.pop()
             continue
+        if next_state.depth > max_depth:
+            max_depth = next_state.depth
         stack += next_state.generate_children()
+        generated_nodes += len(next_state.children)
         next_state = stack.pop()
+    state_border = len(stack)
     path_end = []
     while next_state.parent is not None:
         path_end = [next_state] + path_end
@@ -64,21 +83,28 @@ def depth_first_search(initial_state: StateNode):
 
 # Function for breadth first search, returns the path list
 def breadth_first_search(initial_state: StateNode):
+    start_test_variables()
+    global generated_nodes, state_border, max_depth
     path_start = [initial_state]
     if initial_state.is_final_state():
         return path_start
     q = queue.Queue()
     initial_state.generate_children()
+    generated_nodes += len(initial_state.children)
     for c in initial_state.children:
         q.put(c)
     next_state = q.get()
     while next_state:
         if next_state.is_final_state():
             break
+        if next_state.depth > max_depth:
+            max_depth = next_state.depth
         next_state.generate_children()
+        generated_nodes += len(next_state.children)
         for c in next_state.children:
             q.put(c)
         next_state = q.get()
+    state_border = len(q)
     path_end = []
     while next_state.parent is not None:
         path_end = [next_state] + path_end
@@ -100,10 +126,13 @@ def heuristic_function(state: StateNode):
 
 # Function for greedy search based on the above heuristic function
 def greedy_search(initial_state: StateNode):
+    start_test_variables()
+    global generated_nodes, state_border, max_depth
     path_start = [initial_state]
     if initial_state.is_final_state():
         return path_start
     stack = initial_state.generate_children()
+    generated_nodes += len(initial_state.children)
     less_cost = 1000
     next_state = None
     step_state = None
@@ -120,7 +149,10 @@ def greedy_search(initial_state: StateNode):
         if next_state.depth >= 2 and next_state.game.table == next_state.parent.parent.game.table:
             next_state = step_state
             continue
+        if next_state.depth > max_depth:
+            max_depth = next_state.depth
         stack = next_state.generate_children()
+        generated_nodes += len(next_state.children)
         less_cost = 1000
         for state in stack:
             heuristic_function(state)
@@ -128,6 +160,7 @@ def greedy_search(initial_state: StateNode):
                 less_cost = state.cost
                 next_state = state
         stack.clear()
+    state_border = len(stack)
     path_end = []
     while next_state.parent is not None:
         path_end = [next_state] + path_end
@@ -137,10 +170,13 @@ def greedy_search(initial_state: StateNode):
 
 # Function for A* search based on the heuristic function above
 def a_star_search(initial_state: StateNode):
+    start_test_variables()
+    global generated_nodes, state_border, max_depth
     path_start = [initial_state]
     if initial_state.is_final_state():
         return path_start
     q = initial_state.generate_children()
+    generated_nodes += len(initial_state.children)
     less_cost = 1000
     next_state = None
     for state in q:
@@ -152,7 +188,10 @@ def a_star_search(initial_state: StateNode):
     while next_state:
         if next_state.is_final_state():
             break
+        if next_state.depth > max_depth:
+            max_depth = next_state.depth
         aux = next_state.generate_children()
+        generated_nodes += len(next_state.children)
         for state in aux:
             heuristic_function(state)
         q += aux
@@ -162,6 +201,7 @@ def a_star_search(initial_state: StateNode):
                 less_cost = state.cost
                 next_state = state
         q.remove(next_state)
+    state_border = len(q)
     path_end = []
     while next_state.parent is not None:
         path_end = [next_state] + path_end

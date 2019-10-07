@@ -9,12 +9,12 @@ table3 = [['b', 2, 3], [1, 5, 6], [4, 7, 8]]
 #initial_state = s.StateNode(g.Game8(table2), None, None, 0, 0)
 initial_state = s.StateNode(g.Game8(table3), None, None, 0, 0)
 
-search = s.depth_first_search(initial_state)
-#search = s.breadth_first_search(initial_state)
-#search = s.greedy_search(initial_state)
-#search = s.a_star_search(initial_state)
+#search = s.depth_first_search(initial_state)       # Not OK
+#search = s.breadth_first_search(initial_state)     # OK
+#search = s.greedy_search(initial_state)            # Not OK
+search = s.a_star_search(initial_state)             # OK
 
 for state in search:
     state.game.show_table()
 
-print(search.__len__())
+print("Passos: " + str(search.__len__() - 1))
